@@ -6,7 +6,7 @@ import seaborn as sns
 
 # Set Parameters
 sigh = 19
-sigv = 1
+sigv = .15
 betahv = .7
 betavh = .7
 infecth = 1/5.5
@@ -18,7 +18,6 @@ Nh = 15276566
 Nv = 200000000
 
 # Define Differential Equations
-
 def Sh(exposeh,Sh):
     val = -exposeh * Sh
     return val
@@ -53,3 +52,19 @@ def exposeh(sigh,sigv,Nv,Nh,betahv,Iv):
 
 def exposev(sigh,sigv,Nv,Nh,betavh,Iv):
     val = ((sigh*sigv*Nv)/(sigv*Nv + sigh*Nh))*betavh*(Ih/Nh)
+    return val
+
+
+# initial condition
+
+# time points
+t = np.linspace(0,10,100)
+
+# solve ODE
+y = odeint(Sh,exposeh,Sh,t)
+
+# plot results
+plt.plot(t,y)
+plt.xlabel('time')
+plt.ylabel('y(t)')
+plt.show()
