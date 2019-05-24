@@ -62,7 +62,7 @@ def model(y, t):
     sh = dSh(exposeh, y[0])
     eh = dEh(exposeh, y[0], infecth, y[1])
     ih = dIh(infecth, y[1], recoverh, y[2])
-    rh = dRh(recoverh, y[1])
+    rh = dRh(recoverh, y[2])
     sv = dSv(birthv, Nv, exposev, y[4], deathv)
     ev = dEv(exposev, y[4], infectv, y[5], deathv)
     iv = dIv(infectv, y[5], deathv, y[6])
@@ -71,13 +71,13 @@ def model(y, t):
 
 
 # initial conditions
-Sh0 = 1
-Eh0 = 1
-Ih0 = 1
-Rh0 = 1
-Sv0 = 1
-Ev0 = 1
-Iv0 = 1
+Sh0 = 1000000
+Eh0 = 0
+Ih0 = 0
+Rh0 = 0
+Sv0 = 10000000
+Ev0 = 10000
+Iv0 = 0
 exposeh0 = dexposeh(sigh, sigv, Nv, Nh, betahv, Iv0)
 exposev0 = dexposev(sigh, sigv, Nv, Nh, betahv, Ih0)
 
@@ -85,13 +85,18 @@ y0 = [Sh0, Eh0, Ih0, Rh0, Sv0, Ev0, Iv0, exposeh0, exposev0]
 
 
 # time points
-t = np.linspace(0,10,100)
+t = np.linspace(0,200,num=100000)
 
 # solve ODE
 y = odeint(model, y0, t)
 
+infectedH = y[:, 2]
+infectedV = y[:, 6]
+
+sns.set()
+
 # plot results
-plt.plot(t,y)
-plt.xlabel('time')
-plt.ylabel('y(t)')
+fig, ax = plt.subplots(2)
+ax[0].plot(t, infectedH)
+ax[1].plot(t, infectedV)
 plt.show()
