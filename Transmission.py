@@ -103,12 +103,36 @@ recoveredH = y[:, 3]
 
 sns.set()
 
+maxes = []
+for i in np.linspace(0,1,20):
+    # solve ODE
+    sigv = i
+    y = odeint(model, y0, t)
+    maxes.append(max(y[:, 2]))
+    print(i)
+
+x = np.linspace(0,1,20)
+plt.plot(x,maxes)
+
+
+duration = []
+for i in np.linspace(0,1,20):
+    # solve ODE
+    sigv = i
+    y = odeint(model, y0, t)
+    
+
+    duration.append(max(y[:, 2]))
+    print(i)
+
+x = np.linspace(0,1,20)
+plt.plot(x,maxes)
 # plot results
 # fig, ax = plt.subplots(2)
-plt.plot(t, infectedH)
-plt.plot(t, exposedH)
-plt.plot(t, susceptibleH)
-plt.plot(t, recoveredH)
-plt.legend(['infected', 'exposed', 'susceptible', 'recovered'])
+# plt.plot(t, infectedH)
+# plt.plot(t, exposedH)
+# plt.plot(t, susceptibleH)
+# plt.plot(t, recoveredH)
+# plt.legend(['infected', 'exposed', 'susceptible', 'recovered'])
 # ax[1].plot(t, infectedV)
 plt.show()
