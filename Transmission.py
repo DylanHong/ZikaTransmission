@@ -90,18 +90,25 @@ y0 = [Sh0, Eh0, Ih0, Rh0, Sv0, Ev0, Iv0, exposeh0, exposev0]
 
 
 # time points
-t = np.linspace(0,1000,num=100000)
+t = np.linspace(0,200,num=100000)
 
 # solve ODE
 y = odeint(model, y0, t)
 
 infectedH = y[:, 2]
 infectedV = y[:, 6]
+exposedH = y[:, 1]
+susceptibleH = y[:, 0]
+recoveredH = y[:, 3]
 
 sns.set()
 
 # plot results
-fig, ax = plt.subplots(2)
-ax[0].plot(t, infectedH)
-ax[1].plot(t, infectedV)
+# fig, ax = plt.subplots(2)
+plt.plot(t, infectedH)
+plt.plot(t, exposedH)
+plt.plot(t, susceptibleH)
+plt.plot(t, recoveredH)
+plt.legend(['infected', 'exposed', 'susceptible', 'recovered'])
+# ax[1].plot(t, infectedV)
 plt.show()
