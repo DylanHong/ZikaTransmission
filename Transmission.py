@@ -90,7 +90,7 @@ y0 = [Sh0, Eh0, Ih0, Rh0, Sv0, Ev0, Iv0, exposeh0, exposev0]
 
 
 # time points
-t = np.linspace(0,200,num=100000)
+t = np.linspace(0,1000,num=100000)
 
 # solve ODE
 y = odeint(model, y0, t)
@@ -104,35 +104,70 @@ recoveredH = y[:, 3]
 sns.set()
 
 maxes = []
-for i in np.linspace(0,1,20):
+x = np.linspace(0,.5,200)
+for i in x:
     # solve ODE
     sigv = i
     y = odeint(model, y0, t)
     maxes.append(max(y[:, 2]))
-    print(i)
 
-x = np.linspace(0,1,20)
+plt.figure()
 plt.plot(x,maxes)
+plt.title('Effect of Bite Rate on Severity of Outbreak')
+plt.xlabel('Bite Rate')
+plt.ylabel('Maximum Number of Infected Humans')
+plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+plt.savefig('maxes.png')
 
 
 duration = []
-for i in np.linspace(0,1,20):
+vals = np.linspace(0.05,.5,200)
+for i in vals:
     # solve ODE
     sigv = i
     y = odeint(model, y0, t)
-    
+    foundStart = False
+    start = None
+    end = None
+    for j, value in enumerate(y[:, 2]):
+        if foundStart is False and value >= 1000:
+            start = j
+            foundStart = True
+        elif foundStart is True and value <= 1000:
+            end = j
+            break
 
-    duration.append(max(y[:, 2]))
-    print(i)
+    dur = t[end] - t[start]
+    duration.append(dur)
 
-x = np.linspace(0,1,20)
-plt.plot(x,maxes)
+plt.figure()
+plt.plot(vals,duration)
+plt.title('Effect of Bite Rate on Duration of Outbreak')
+plt.ylabel('Duration (Days)')
+plt.xlabel('Bite Rate')
+plt.savefig('durations.png')
+
+
+# time points
+t = np.linspace(0,100,num=10000)
+
+# solve ODE
+y = odeint(model, y0, t)
+
+infectedH = y[:, 2]
+infectedV = y[:, 6]
+exposedH = y[:, 1]
+susceptibleH = y[:, 0]
+recoveredH = y[:, 3]
+
 # plot results
-# fig, ax = plt.subplots(2)
-# plt.plot(t, infectedH)
-# plt.plot(t, exposedH)
-# plt.plot(t, susceptibleH)
-# plt.plot(t, recoveredH)
-# plt.legend(['infected', 'exposed', 'susceptible', 'recovered'])
-# ax[1].plot(t, infectedV)
-plt.show()
+plt.figure()
+plt.plot(t, infectedH)
+plt.plot(t, exposedH)
+plt.plot(t, susceptibleH)
+plt.plot(t, recoveredH)
+plt.legend(['Infected', 'Exposed', 'Susceptible', 'Recovered'])
+plt.title('Zika Infection Dynamics over Time')
+plt.ylabel('Number (in each category)')
+plt.xlabel('Days')
+plt.savefig('overall.png')
