@@ -119,6 +119,40 @@ plt.ylabel('Maximum Number of Infected Humans')
 plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 plt.savefig('maxes.png')
 
+maxes1 = []
+x = np.linspace(10000000,250000000,200)
+for i in x:
+    # solve ODE
+    Sv0 = i
+    y0 = [Sh0, Eh0, Ih0, Rh0, Sv0, Ev0, Iv0, exposeh0, exposev0]
+    y = odeint(model, y0, t)
+    maxes1.append(max(y[:, 2]))
+
+plt.figure()
+plt.plot(x,maxes1)
+plt.title('Effect of Bite Rate on Severity of Outbreak')
+plt.xlabel('Bite Rate')
+plt.ylabel('Maximum Number of Infected Humans')
+plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+plt.savefig('maxes1.png')
+
+
+sums = []
+x = np.linspace(0,.5,200)
+for i in x:
+    # solve ODE
+    sigv = i
+    y = odeint(model, y0, t)
+    sums.append(sum(y[:, 2]))
+
+plt.figure()
+plt.plot(x,sums)
+plt.title('Effect of Bite Rate on Severity of Outbreak')
+plt.xlabel('Bite Rate')
+plt.ylabel('Maximum Number of Infected Humans')
+plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+plt.savefig('sums.png')
+
 
 duration = []
 vals = np.linspace(0.05,.5,200)
@@ -147,6 +181,34 @@ plt.ylabel('Duration (Days)')
 plt.xlabel('Bite Rate')
 plt.savefig('durations.png')
 
+duration1 = []
+vals = np.linspace(10000000,250000000,200)
+
+for i in vals:
+    # solve ODE
+    Sv0 = i
+    y0 = [Sh0, Eh0, Ih0, Rh0, Sv0, Ev0, Iv0, exposeh0, exposev0]
+    y = odeint(model, y0, t)
+    foundStart = False
+    start = None
+    end = None
+    for j, value in enumerate(y[:, 2]):
+        if foundStart is False and value >= 1000:
+            start = j
+            foundStart = True
+        elif foundStart is True and value <= 1000:
+            end = j
+            break
+
+    dur = t[end] - t[start]
+    duration1.append(dur)
+
+plt.figure()
+plt.plot(vals,duration1)
+plt.title('Effect of Bite Rate on Duration of Outbreak')
+plt.ylabel('Duration (Days)')
+plt.xlabel('Bite Rate')
+plt.savefig('durations1.png')
 
 # time points
 t = np.linspace(0,100,num=10000)
